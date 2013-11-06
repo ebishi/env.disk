@@ -49,7 +49,7 @@ cd "`dirname "${SCRIPT_PATH}"`" > /dev/null
 SCRIPT_PATH="`pwd`";
 popd  > /dev/null
 
-source ${SCRIPT_PATH}/functions.sh
+source "${SCRIPT_PATH}/functions.sh"
 
 clear
 echo -e "Hello ${PURPLE}${HOSTNAME}${NONE}, you beautiful ${PURPLE}${OS}${NONE} box, you."
@@ -91,9 +91,9 @@ fi
 #############################################################################################
 echo -e ${TITLE}Setting up the RamDisk.${NONE}
 if [ $OS = "Linux" ]; then
-	source ${SCRIPT_PATH}/linux_ramdisk.sh
+	source "${SCRIPT_PATH}/linux_ramdisk.sh"
 elif [ $OS = "Darwin" ]; then
-	source ${SCRIPT_PATH}/darwin_ramdisk.sh
+	source "${SCRIPT_PATH}/darwin_ramdisk.sh"
 	
 else
 	echo "I don't recognize ${OS}. Aborting."
@@ -111,20 +111,20 @@ fi
 # if it is a symlink, but the target is invalid, gpg will fail
 # we should check this first, and delete the symlink if it is invalid
 
-mkdir ${MOUNT_POINT}/${DISK_NAME}/gnupg
+mkdir "${MOUNT_POINT}/${DISK_NAME}/gnupg"
 
 create_dotdir gnupg
 echo ""
 echo -e "Unpacking gpg.tpg archive"
 # We should wrap this in some sort of while loop, to the password is entered successsfully
-gpg < ${SCRIPT_PATH}/env/gpg.tpg | tar -C ${MOUNT_POINT}/${DISK_NAME}/gnupg/ -xv
-ls -lh ${MOUNT_POINT}/${DISK_NAME}/
+gpg < "${SCRIPT_PATH}/env/gpg.tpg" | tar -C "${MOUNT_POINT}/${DISK_NAME}/gnupg/" -xv
+ls -lh "${MOUNT_POINT}/${DISK_NAME}/"
 
 gpg --list-secret
 
 # Import public keys from ${SCRIPT_PATH}/env/public_gpg
 
-gpg --import ${SCRIPT_PATH}/env/public_gpg/*.asc
+gpg --import "${SCRIPT_PATH}"/env/public_gpg/*.asc
 
 
 #############################################################################################
@@ -135,30 +135,30 @@ gpg --import ${SCRIPT_PATH}/env/public_gpg/*.asc
 
 create_dotdir ssh
 
-while ! [ -d ${MOUNT_POINT}/${DISK_NAME}/ssh ]; do
+while ! [ -d "${MOUNT_POINT}/${DISK_NAME}/ssh" ]; do
 	# Keep prompting for the gpg passphrase, until successful
 	# Should probably add a counter to this as well, rather than allowing infinite tries
 	echo ""
 	echo -e "Unpacking ssh.tpg archive"
-	gpg < ${SCRIPT_PATH}/env/ssh.tpg | tar -C ${MOUNT_POINT}/${DISK_NAME} -xv
+	gpg < "${SCRIPT_PATH}/env/ssh.tpg" | tar -C "${MOUNT_POINT}/${DISK_NAME}" -xv
 done
 
 # ssh private key is in env/ssh/steph_ccj.gpg
 # should create an archive for all the private keys (unfuddle & empty as well)
 
 
-chmod 700 ${MOUNT_POINT}/${DISK_NAME}/ssh
-chmod 600 ${MOUNT_POINT}/${DISK_NAME}/ssh/config
-chmod 600 ${MOUNT_POINT}/${DISK_NAME}/ssh/private_keys/steph_ccj
-chmod 600 ${MOUNT_POINT}/${DISK_NAME}/ssh/private_keys/unfuddle
+chmod 700 "${MOUNT_POINT}/${DISK_NAME}/ssh"
+chmod 600 "${MOUNT_POINT}/${DISK_NAME}/ssh/config"
+chmod 600 "${MOUNT_POINT}/${DISK_NAME}/ssh/private_keys/steph_ccj"
+chmod 600 "${MOUNT_POINT}/${DISK_NAME}/ssh/private_keys/unfuddle"
 
 echo Loading SSH key
-ssh-add ${MOUNT_POINT}/${DISK_NAME}/ssh/private_keys/steph_ccj
-ssh-add ${MOUNT_POINT}/${DISK_NAME}/ssh/private_keys/unfuddle
+ssh-add "${MOUNT_POINT}/${DISK_NAME}/ssh/private_keys/steph_ccj"
+ssh-add "${MOUNT_POINT}/${DISK_NAME}/ssh/private_keys/unfuddle"
 ssh-add -list
 
 #echo Removing SSH private key
-rm -rf ${MOUNT_POINT}/${DISK_NAME}/ssh/private_keys
+rm -rf "${MOUNT_POINT}/${DISK_NAME}/ssh/private_keys"
 
 
 # a friendly space at the end, so we don't look so crowded.
